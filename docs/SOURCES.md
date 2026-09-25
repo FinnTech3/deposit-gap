@@ -36,9 +36,9 @@ on the local authority boundaries of 2025.
 - **Year labels differ.** Price columns say "Year ending Sep 1997", earnings
   columns "1997"; both are the same year.
 - **Guessed series codes.** I found the Bank of England series by trying
-  codes, and three of the four I tried were mortgage rates. The one used here
-  was checked against the Bank's own description before anything was built
-  on it.
+  codes. Of the four whose descriptions I looked up, three were mortgage or
+  lending rates. The one used here was checked against the Bank's own
+  description before anything was built on it.
 
 ## Also read, not used
 
