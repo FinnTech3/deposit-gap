@@ -59,6 +59,15 @@ def main() -> int:
         print(f"  local authorities, starting {y}: {len(known)} with data; still saving in 2025: {len(still)}; "
               f"median years for those who bought: {statistics.median(bought):g}")
 
+    print("  starting 2015, still saving in 2025, by region:")
+    regions: dict[str, list] = {}
+    for a in las:
+        c = chases[a.code][2015]
+        if c:
+            regions.setdefault(a.region, []).append(not c.bought)
+    for region, flags in sorted(regions.items(), key=lambda kv: -sum(kv[1]) / len(kv[1])):
+        print(f"    {region}: {sum(flags)} of {len(flags)}")
+
     print("\nThe same saver, other ways (England and Wales)")
     for name, cs in r["plan_chases"].items():
         print(f"  {name}: " + ", ".join(
