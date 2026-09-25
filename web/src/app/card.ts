@@ -116,8 +116,8 @@ export function drawCard(canvas: HTMLCanvasElement, c: CardContent): void {
     }
   });
   ctx.fillStyle = MUTED;
-  ctx.font = '400 28px "IBM Plex Sans", sans-serif';
-  ctx.fillText("years it took, by the year saving started, 1997 to 2024", P, base + 44);
+  ctx.font = '400 26px "IBM Plex Sans", sans-serif';
+  ctx.fillText("years it took, by the year saving started, 1997 to 2024; dashed: still saving in 2025", P, base + 44);
   ctx.font = '400 32px "IBM Plex Mono", monospace';
   ctx.fillText("finntech3.github.io/deposit-gap", P, 1350 - P);
 }
