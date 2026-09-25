@@ -12,6 +12,7 @@ from __future__ import annotations
 import csv
 import datetime as dt
 import functools
+import math
 import os
 from dataclasses import dataclass
 
@@ -86,4 +87,5 @@ def savings_rate() -> dict[int, float]:
         for r in csv.DictReader(f):
             d = dt.datetime.strptime(r["DATE"], "%d %b %Y").date()
             months.setdefault(d.year, []).append(float(r["IUMWTFA"]))
-    return {y: sum(v) / len(v) for y, v in months.items() if len(v) == 12}
+    # summed exactly, so every Python version gives the same last digit
+    return {y: math.fsum(v) / len(v) for y, v in months.items() if len(v) == 12}
