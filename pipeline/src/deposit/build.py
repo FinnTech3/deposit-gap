@@ -35,7 +35,7 @@ def main() -> int:
     keep = [a for a in lq.values() if a.level in ("local authority", "country or region")]
     data = {
         "years": years,
-        "rates": [round(rates[y], 4) for y in years],
+        "rates": [rates[y] for y in years],   # exact, so the app's chase matches to the penny
         "areas": [
             {
                 "code": a.code,
