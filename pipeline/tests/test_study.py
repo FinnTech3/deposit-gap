@@ -27,8 +27,10 @@ def test_with_nothing_moving_and_no_interest_the_chase_is_the_paper_figure():
 
 
 def test_rising_prices_make_the_chase_longer():
+    # the target grows 3% a year from £10,927 while the pot grows £2,000 a year:
+    # after six years £12,000 against £12,668, after seven £14,000 against £13,048
     c = study.chase(flat_area(growth=0.03), 2000, Plan(interest=False))
-    assert c.bought and c.years == 9    # the target grows 3% a year while the pot grows by a fixed £2,000
+    assert c.bought and c.years == 7
 
 
 def test_prices_that_outrun_saving_are_never_caught():
