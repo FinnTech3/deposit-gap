@@ -11,6 +11,7 @@ import statistics
 import sys
 
 from . import study, verify
+from .sources import savings_rate
 
 
 def yrs(x: float) -> str:
@@ -36,13 +37,17 @@ def main() -> int:
 
     print("\nOn paper (years = the lower-quartile affordability ratio)")
     for area in (ew, london):
-        print(f"  {area.name}: " + ", ".join(f"{y} {yrs(paper[area.code][y])}" for y in (1997, 2002, 2007, 2015, 2022, 2025)))
+        print(f"  {area.name}: " + ", ".join(f"{y} {yrs(paper[area.code][y])}" for y in (1997, 2002, 2007, 2015, 2021, 2022, 2025)))
     since = max(y for y in range(study.FIRST, study.LAST) if paper[ew.code][y] <= paper[ew.code][study.LAST])
     print(f"  {ew.name} in 2025 is the lowest since {since} ({yrs(paper[ew.code][since])})")
     for y in (1997, 2025):
         v = sorted(paper[a.code][y] for a in las if paper[a.code][y] is not None)
         print(f"  local authorities, {y}: {len(v)} with data, median {yrs(statistics.median(v))}, "
               f"range {yrs(v[0])} to {yrs(v[-1])}, ten years or more: {sum(x >= 10 for x in v)}, under five: {sum(x < 5 for x in v)}")
+
+    ranked = sorted((paper[a.code][study.LAST], a.name) for a in las if paper[a.code][study.LAST] is not None)
+    print("  2025, quickest: " + "; ".join(f"{n} {yrs(v)}" for v, n in ranked[:3])
+          + "; slowest: " + "; ".join(f"{n} {yrs(v)}" for v, n in ranked[-3:]))
 
     print("\nThe chase: how long it actually took, by the year saving started")
     for area in (ew, london):
@@ -72,6 +77,13 @@ def main() -> int:
     for name, cs in r["plan_chases"].items():
         print(f"  {name}: " + ", ".join(
             f"{y} {cs[y].years}" if cs[y].bought else f"{y} still after {cs[y].years}" for y in (1997, 2005, 2010, 2015)))
+    base, flat = r["plan_chases"]["base"], r["plan_chases"]["no interest"]
+    changed = [y for y in base if base[y] and (base[y].years, base[y].bought) != (flat[y].years, flat[y].bought)]
+    print(f"  interest changes the answer for starts in: {', '.join(map(str, changed))}")
+    rates = savings_rate()
+    early = [rates[y] for y in range(1997, 2005)]
+    print(f"  the one-year bond rate, 1997 to 2004: {min(early):.1f}% to {max(early):.1f}%; 2021: {rates[2021]:.2f}%; "
+          f"2025: {rates[2025]:.2f}%")
     return 0
 
 
