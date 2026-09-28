@@ -6,10 +6,9 @@ you save.
 
 **Work out yours:** [finntech3.github.io/deposit-gap](https://finntech3.github.io/deposit-gap/)
 
-**Why I built this.** "Just save harder" is advice that assumes the target
-holds still while you save towards it. I wanted to know how often that
-assumption actually held, so I built a saver who does exactly what the
-advice says and watched whether the maths ever let them catch up.
+**Why I built this.** Deposit advice always assumes the target holds still
+while you save towards it. It doesn't. I built a saver who follows the
+advice exactly, then timed how long that assumption actually survives.
 
 ## The finding
 
