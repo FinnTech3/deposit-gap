@@ -18,6 +18,7 @@ import { ShareCard } from "./ShareCard";
 import { useCountUp } from "./hooks";
 
 const REPO = "https://github.com/FinnTech3/deposit-gap";
+const PORTFOLIO = "https://finn-lakin-portfolio.netlify.app/";
 
 function useTheme() {
   const [theme, setTheme] = useState<string | undefined>(() => document.documentElement.dataset.theme);
@@ -114,6 +115,16 @@ export function App() {
         </div>
 
         {d && c && <Sections d={d} c={c} />}
+
+        {d && c && (
+          <aside className="signoff">
+            <p>
+              I built this because "just save harder" assumes the target holds still while you save towards it, and I
+              wanted to know how often that was actually true. If your own area told you something worth knowing, I've
+              got more like it at <a href={PORTFOLIO}>finn-lakin-portfolio.netlify.app</a>.
+            </p>
+          </aside>
+        )}
       </main>
 
       <footer>

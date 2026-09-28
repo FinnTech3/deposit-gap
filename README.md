@@ -6,6 +6,11 @@ you save.
 
 **Work out yours:** [finntech3.github.io/deposit-gap](https://finntech3.github.io/deposit-gap/)
 
+**Why I built this.** "Just save harder" is advice that assumes the target
+holds still while you save towards it. I wanted to know how often that
+assumption actually held, so I built a saver who does exactly what the
+advice says and watched whether the maths ever let them catch up.
+
 ## The finding
 
 **Someone on lower-quartile pay who started saving for a deposit in 2015 was
@@ -38,10 +43,12 @@ started in 1997, 7 years if they started in 2005, and 9 if they started in
 
 **What I think this means.** "Save for a deposit" has quietly stopped being a
 plan for a lower-paid first-time buyer across much of the South, and it still
-works almost everywhere else. The on-paper sum understates it: in London the
-1997 figure was 4.0 years, and the saver who started that year needed 8,
-because prices ran ahead of what they could put aside. The gap between the sum
-and the chase is the real cost of a target that moves.
+works almost everywhere else, which is exactly the kind of split a single
+national headline number is built to hide. The on-paper sum understates it: in
+London the 1997 figure was 4.0 years, and the saver who started that year
+needed 8, because prices ran ahead of what they could put aside. The gap
+between the sum and the chase is the real cost of a target that moves, and it
+is the part every "years to save" headline leaves out.
 
 ## Then and now, on paper
 
