@@ -15,10 +15,14 @@ import {
 import { AreasStrip } from "./AreasStrip";
 import { ChaseChart } from "./ChaseChart";
 import { ShareCard } from "./ShareCard";
+import { Skyline } from "./Skyline";
 import { useCountUp } from "./hooks";
+import { Monogram } from "./series/Monogram";
+import { Note } from "./series/Note";
+import { SeriesStrip } from "./series/SeriesStrip";
+import { PORTFOLIO } from "./series/series";
 
 const REPO = "https://github.com/FinnTech3/deposit-gap";
-const PORTFOLIO = "https://finn-lakin-portfolio.netlify.app/";
 
 function useTheme() {
   const [theme, setTheme] = useState<string | undefined>(() => document.documentElement.dataset.theme);
@@ -68,18 +72,22 @@ export function App() {
     if (c) history.replaceState(null, "", `${location.pathname}${writeChoice(c)}`);
   }, [c]);
 
+  const plan = useMemo(() => {
+    if (!d || !c) return null;
+    const area = d.areas.find((x) => x.code === c.area)!;
+    const monthly = c.monthly ?? ((latest(area.lq_pay) ?? 0) * 0.1) / 12;
+    return planFor(area, monthly, c.deposit);
+  }, [d, c]);
+
   return (
     <div className="wrap">
-      <header>
-        <div className="mark">
-          <span className="ladder" aria-hidden="true">
-            {[6, 9, 12, 15, 16].map((h, i) => (
-              <i key={i} className={i === 4 ? "d" : undefined} style={{ height: h }} />
-            ))}
-          </span>
-          <b>Deposit gap</b>
-          <small>how long a deposit takes</small>
-        </div>
+      <header className="bar">
+        <Monogram />
+        <p className="series">
+          A series of six by <b>Finn Lakin</b>
+          <br />
+          No. 5 · Deposits
+        </p>
         <button
           className="toggle"
           type="button"
@@ -91,39 +99,60 @@ export function App() {
       </header>
 
       <main>
-        <div className="hero">
-          <h1>How long would a deposit take you, and how long did it take before?</h1>
-          <p className="lede">
-            Pick where you live and what you can put aside. Every area's house prices and pay come from the ONS, from
-            1997 to 2025, rebuilt to its published figures.
-          </p>
-          {d && c ? (
-            <Controls d={d} c={c} set={(patch) => setC({ ...c, ...patch })} />
-          ) : (
-            <div className="controls skeleton-controls" aria-hidden="true" />
-          )}
-        </div>
+        <div className="stage">
+          <div className="head">
+            <h1>
+              A town of <em>front doors.</em>
+            </h1>
+            <p className="dek">
+              Every council in England and Wales as a house, as tall as the years its lower-quartile pay would take to
+              save a deposit on its lower-quartile home. Scrub the years and watch the town grow.
+            </p>
+          </div>
 
-        <div className={d && c ? "answer" : "answer skeleton"} aria-live="polite">
-          {failed ? (
-            <p>The data did not load. Refresh the page to try again.</p>
-          ) : d && c ? (
-            <Answer d={d} c={c} />
-          ) : (
-            <p>Loading 29 years of prices and pay for every area</p>
-          )}
+          <Note>
+            I wanted to know whether a deposit had really got further away, or whether that was just something people
+            said. So I built the whole country's answer, year by year, and put my own saving into it.
+          </Note>
+
+          <figure className="skyline-fig">
+            {d && c && plan ? (
+              <Skyline d={d} plan={plan} current={c.area} onPick={(area) => setC({ ...c, area })} />
+            ) : (
+              <p className="waiting">
+                {failed ? "The data did not load. Refresh the page to try again." : "Building every council"}
+              </p>
+            )}
+          </figure>
+
+          <div className="side">
+            {d && c ? (
+              <Controls d={d} c={c} set={(patch) => setC({ ...c, ...patch })} />
+            ) : (
+              <div className="controls skeleton-controls" aria-hidden="true" />
+            )}
+
+            <div className={d && c ? "answer" : "answer skeleton"} aria-live="polite">
+              {failed ? (
+                <p>The data did not load. Refresh the page to try again.</p>
+              ) : d && c ? (
+                <Answer d={d} c={c} />
+              ) : (
+                <p>Loading 29 years of prices and pay for every area</p>
+              )}
+            </div>
+          </div>
         </div>
 
         {d && c && <Sections d={d} c={c} />}
 
         {d && c && (
           <aside className="signoff">
-            <p>
-              That's how long the maths actually takes where you are, not the national headline. More like it at{" "}
-              <a href={PORTFOLIO}>finn-lakin-portfolio.netlify.app</a>.
-            </p>
+            <p>That's how long the arithmetic actually takes where you are, not the national headline.</p>
           </aside>
         )}
+
+        <SeriesStrip here="deposit-gap" />
       </main>
 
       <footer>
@@ -137,8 +166,9 @@ export function App() {
           Rent, stamp duty, fees and family help are not counted, and neither is whether a lender would lend the rest.
         </p>
         <p>
-          Built by Finn Lakin. The method, the code and every check are at{" "}
-          <a href={REPO}>github.com/FinnTech3/deposit-gap</a>. No cookies, no tracking.
+          Made by Finn Lakin. The method, the code and every check are at{" "}
+          <a href={REPO}>github.com/FinnTech3/deposit-gap</a>, and the rest of my work is at{" "}
+          <a href={PORTFOLIO}>finn-lakin-portfolio.netlify.app</a>. No cookies, no tracking.
         </p>
       </footer>
     </div>

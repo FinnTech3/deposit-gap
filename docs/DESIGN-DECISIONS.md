@@ -72,6 +72,25 @@ recent years only would make the early and late chases incomparable. The
 saving rate is an assumption, stated, and the app lets the reader put in what
 they can actually save.
 
+## Why one long terrace, and not streets?
+
+Three hundred and seventeen houses in one row are thin, so I tried breaking
+them into terraces of eighty. It made each terrace nearly flat, because the
+houses are sorted by height first and cut into rows after, which puts houses of
+almost the same height side by side. One row keeps the climb from three years
+to twenty visible, which is the thing worth seeing. The houses are narrow, and
+the gap between them is a third of their width so they still read as separate
+front doors rather than a solid block.
+
+## Why is the scale fixed at the tallest house in any year?
+
+Because the point is that the town grew. If the scale followed the year, the
+tallest house would touch the top of the frame in 1997 and in 2025, and the
+picture would say nothing. Fixed, the 1997 town is low and the 2025 town is
+half as tall again, which is what happened. The cost is empty sky above 2025,
+because one council, Kensington and Chelsea, reached 33.9 years in 2018 and
+nothing else comes near it.
+
 ## Why no charting library?
 
 The charts are bars and dots. Drawn as SVG directly they resize to the screen

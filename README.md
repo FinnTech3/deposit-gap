@@ -116,6 +116,13 @@ still be saving.
 More on each choice in [docs/DESIGN-DECISIONS.md](docs/DESIGN-DECISIONS.md).
 Every source, address and checksum is in [docs/SOURCES.md](docs/SOURCES.md).
 
+- **The town.** Every local authority with a figure is drawn as a house, as
+  tall as the years its lower-quartile pay would take to save the deposit at
+  that year's prices, shortest on the left. The scale is fixed at the tallest
+  any council ever reached, so scrubbing the years grows the town instead of
+  rescaling the picture. A region has no house of its own, so it is marked as a
+  line across the terrace.
+
 ## What this leaves out
 
 - **Rent.** Saving a tenth of gross pay is an assumption, and in the places
