@@ -5,6 +5,7 @@
   --ink-2: #474e55;
   --muted: #636b73;
   --rule: #d8d1c6;
+  --edge: #948266;
   --grid: #e7e1d6;
   --rest: #8d8579;
   --you: #2c6e49;
@@ -38,6 +39,7 @@
     --ink-2: #c6c3bc;
     --muted: #9a9790;
     --rule: #2f333c;
+    --edge: #646c7f;
     --grid: #242830;
     --rest: #726f68;
     --you: #7fd8a8;
@@ -66,6 +68,7 @@
   --ink-2: #c6c3bc;
   --muted: #9a9790;
   --rule: #2f333c;
+  --edge: #646c7f;
   --grid: #242830;
   --rest: #726f68;
   --you: #7fd8a8;
@@ -187,7 +190,7 @@ select {
   margin-left: auto;
   flex: none;
   background: none;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--edge);
   border-radius: 999px;
   padding: 6px 12px;
   font-family: var(--mono);
@@ -253,7 +256,7 @@ h1 em {
 .btn.quiet {
   background: var(--panel);
   color: var(--ink);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--edge);
 }
 
 .side {
@@ -437,7 +440,7 @@ h1 em {
 
 .council-pick select {
   background: var(--panel);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--edge);
   border-radius: 8px;
   padding: 8px 10px;
   max-width: 100%;
@@ -743,7 +746,7 @@ h2 {
 .field select {
   width: 100%;
   background: var(--panel);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--edge);
   border-radius: 8px;
   padding: 11px 12px;
   font-size: 17px;
@@ -752,7 +755,7 @@ h2 {
 
 .segmented {
   display: inline-flex;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--edge);
   border-radius: 999px;
   padding: 3px;
   background: var(--panel);
@@ -805,7 +808,7 @@ h2 {
 
 .field select,
 .money input {
-  border: 1px solid var(--rule);
+  border: 1px solid var(--edge);
   border-radius: 10px;
   background: var(--panel);
   padding: 10px 12px;

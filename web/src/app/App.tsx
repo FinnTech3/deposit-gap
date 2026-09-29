@@ -111,8 +111,9 @@ export function App() {
           </div>
 
           <Note>
-            I wanted to know whether a deposit had really got further away, or whether that was just something people
-            said. So I built the whole country's answer, year by year, and put my own saving into it.
+            Everyone says a deposit has got further away. I wanted to know whether that was true, and how much of it
+            depends on where you are, so here is every council in England and Wales, year by year, with my own saving in
+            it.
           </Note>
 
           <figure className="skyline-fig">
