@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { chase, type DepositFile, onPaper, payNow, planFrom, readChoice, shareOfPay, tenth, writeChoice } from "./deposit";
+import { chase, type DepositFile, looksLikeDepositFile, onPaper, payNow, planFrom, readChoice, shareOfPay, tenth, writeChoice } from "./deposit";
 
 const d = JSON.parse(readFileSync(new URL("../../public/data/deposit.json", import.meta.url), "utf-8")) as DepositFile;
 const byCode = new Map(d.areas.map((a) => [a.code, a]));
@@ -105,5 +105,13 @@ describe("an area the ONS cannot publish pay for", () => {
     // a tenth of pay is rounded to the nearest £5 a month before it becomes a
     // share again, so doubling the figure doubles that rounding with it
     expect(planFrom(ew, 2 * tenth(ew)!, 0.1).saving).toBeCloseTo(0.2, 2);
+  });
+});
+
+describe("the load guard", () => {
+  it("accepts the real file and rejects anything that is not it", () => {
+    expect(looksLikeDepositFile(d)).toBe(true);
+    for (const bad of [null, undefined, {}, [], [1, 2, 3], { areas: [] }, { years: [] }, "text", 5])
+      expect(looksLikeDepositFile(bad)).toBe(false);
   });
 });

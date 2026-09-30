@@ -152,3 +152,15 @@ export function writeChoice(c: Choice): string {
   const s = q.toString();
   return s ? `?${s}` : "";
 }
+
+/**
+ * True when a parsed JSON body looks like the deposit file, rather than an
+ * error page or a stale deploy's wrong file. file.areas.map already runs in
+ * the load path, so a bad body throws there today; this states the requirement
+ * rather than leaving it to that accident, and keeps the six consistent.
+ */
+export function looksLikeDepositFile(x: unknown): x is DepositFile {
+  if (typeof x !== "object" || x === null) return false;
+  const f = x as Partial<DepositFile>;
+  return Array.isArray(f.areas) && f.areas.length > 0 && Array.isArray(f.years);
+}

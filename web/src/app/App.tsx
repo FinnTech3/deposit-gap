@@ -7,6 +7,7 @@ import {
   type DepositFile,
   chase,
   latest,
+  looksLikeDepositFile,
   onPaper,
   planFrom,
   tenth,
@@ -56,8 +57,9 @@ export function App() {
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}data/deposit.json`)
-      .then((r) => r.json() as Promise<DepositFile>)
+      .then((r) => r.json())
       .then((file) => {
+        if (!looksLikeDepositFile(file)) throw new Error("unexpected data shape");
         setC(readChoice(location.search, new Set(file.areas.map((a) => a.code))));
         setD(file);
       })
