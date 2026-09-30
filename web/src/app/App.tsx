@@ -346,7 +346,7 @@ function Sections({ d, c }: { d: DepositFile; c: Choice }) {
         <h2>How long it actually took here</h2>
         {!chases.some((ch) => ch) ? (
           <p className="sub">
-            {`There is no saver to follow in ${area.name}: the ONS does not publish its lower-quartile pay for every year since 1997, and following one needs an unbroken run of prices and pay. Pick anywhere else and this fills in.`}
+            {`There is no saver to follow in ${area.name}: the ONS leaves years of its lower-quartile pay there unpublished, and following a saver needs an unbroken run of prices and pay. Pick anywhere else and this fills in.`}
           </p>
         ) : (
           <>
