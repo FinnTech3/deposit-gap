@@ -9,13 +9,19 @@ interface Props {
   onPick: (code: string) => void;
 }
 
-interface House {
+export interface House {
   area: AreaData;
   years: number;
 }
 
-/** Every local authority with a figure for this year, shortest first. */
-function street(d: DepositFile, plan: Plan, year: number): House[] {
+/**
+ * Every local authority with a figure for this year, shortest first.
+ *
+ * The middle house is `street()[length >> 1]`, an actual council rather than
+ * the average of two: every year from 1997 to 2025 has an odd number of them,
+ * which src/app/skyline.test.ts holds to.
+ */
+export function street(d: DepositFile, plan: Plan, year: number): House[] {
   const out: House[] = [];
   for (const area of d.areas) {
     if (area.level !== "la") continue;

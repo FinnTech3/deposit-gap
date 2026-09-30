@@ -8,7 +8,8 @@ import {
   chase,
   latest,
   onPaper,
-  planFor,
+  planFrom,
+  tenth,
   readChoice,
   writeChoice,
 } from "../lib/deposit";
@@ -41,11 +42,6 @@ function useTheme() {
   return { dark, toggle };
 }
 
-/** A tenth of the area's lower-quartile pay, a month, to the nearest £5. */
-function tenth(area: AreaData): number {
-  return Math.round((latest(area.lq_pay) ?? 0) / 120 / 5) * 5;
-}
-
 function chaseLine(c: NonNullable<ReturnType<typeof chase>>, start: number): string {
   return c.bought
     ? `took ${c.years} ${c.years === 1 ? "year" : "years"}, buying in ${start + c.years - 1}`
@@ -75,8 +71,7 @@ export function App() {
   const plan = useMemo(() => {
     if (!d || !c) return null;
     const area = d.areas.find((x) => x.code === c.area)!;
-    const monthly = c.monthly ?? ((latest(area.lq_pay) ?? 0) * 0.1) / 12;
-    return planFor(area, monthly, c.deposit);
+    return planFrom(area, c.monthly, c.deposit);
   }, [d, c]);
 
   return (
@@ -183,7 +178,8 @@ function Controls({ d, c, set }: { d: DepositFile; c: Choice; set: (patch: Parti
     for (const a of d.areas.filter((x) => x.level === "la")) out.set(a.region, [...(out.get(a.region) ?? []), a]);
     return [...out.entries()].sort(([x], [y]) => x.localeCompare(y));
   }, [d]);
-  const monthly = c.monthly ?? tenth(area);
+  const own = tenth(area);
+  const monthly = c.monthly ?? own;
 
   return (
     <div className="controls">
@@ -217,14 +213,18 @@ function Controls({ d, c, set }: { d: DepositFile; c: Choice; set: (patch: Parti
           <input
             id="monthly"
             inputMode="numeric"
-            value={String(monthly)}
+            value={monthly === null ? "" : String(monthly)}
             onChange={(e) => {
               const v = Number(e.target.value.replace(/[^0-9]/g, ""));
               set({ monthly: v > 0 ? Math.min(v, 20000) : null });
             }}
           />
         </div>
-        <span className="hint">{`A tenth of lower-quartile pay here is ${gbp(tenth(area))}.`}</span>
+        <span className="hint">
+          {own === null
+            ? `The ONS does not publish lower-quartile pay for ${area.name}, so there is no tenth of it to start from.`
+            : `A tenth of lower-quartile pay here is ${gbp(own)}.`}
+        </span>
       </div>
       <div className="field">
         <span id="deposit">Deposit</span>
@@ -244,14 +244,20 @@ function Answer({ d, c }: { d: DepositFile; c: Choice }) {
   const area = d.areas.find((a) => a.code === c.area)!;
   const monthly = c.monthly ?? tenth(area);
   const price = latest(area.lq_price);
-  const plan = planFor(area, monthly, c.deposit);
+  const plan = planFrom(area, c.monthly, c.deposit);
   const target = price === null ? null : c.deposit * price;
-  const paper = target === null ? null : target / (12 * monthly);
+  const paper = target === null || monthly === null ? null : target / (12 * monthly);
   const shown = useCountUp(paper);
   const then = onPaper(d, area, 1997, plan);
   const from1997 = chase(d, area, 1997, plan);
   const from2015 = chase(d, area, 2015, plan);
 
+  if (monthly === null)
+    return (
+      <p>
+        {`The ONS publishes house prices for ${area.name} but not lower-quartile pay: too few people are surveyed there to publish it without identifying them. That leaves no tenth of pay to start you off, so type what you could save a month and the rest follows. It is the one area of 330 where this happens.`}
+      </p>
+    );
   if (paper === null || target === null) return <p>The ONS does not publish a 2025 price for this area.</p>;
   return (
     <>
@@ -293,7 +299,7 @@ function Answer({ d, c }: { d: DepositFile; c: Choice }) {
 function Sections({ d, c }: { d: DepositFile; c: Choice }) {
   const area = d.areas.find((a) => a.code === c.area)!;
   const monthly = c.monthly ?? tenth(area);
-  const plan = planFor(area, monthly, c.deposit);
+  const plan = planFrom(area, c.monthly, c.deposit);
   const starts = d.years.slice(0, -1);
   const chases = useMemo(() => starts.map((s) => chase(d, area, s, plan)), [d, area, plan.saving, plan.deposit]);
   const paper = useMemo(() => starts.map((s) => onPaper(d, area, s, plan)), [d, area, plan.saving, plan.deposit]);
@@ -311,11 +317,14 @@ function Sections({ d, c }: { d: DepositFile; c: Choice }) {
     return ch && !ch.bought;
   }).length;
   const price = latest(area.lq_price);
-  const paperNow = price === null ? null : (c.deposit * price) / (12 * monthly);
+  const paperNow = price === null || monthly === null ? null : (c.deposit * price) / (12 * monthly);
   const from1997 = chase(d, area, 1997, plan);
   const card = useMemo(
     () => ({
-      lead: `Saving ${gbp(monthly)} a month for a ${Math.round(c.deposit * 100)}% deposit in ${area.name}:`,
+      lead:
+        monthly === null
+          ? `${area.name}, the one area of 330 with no published lower-quartile pay:`
+          : `Saving ${gbp(monthly)} a month for a ${Math.round(c.deposit * 100)}% deposit in ${area.name}:`,
       big: paperNow === null ? "no data" : years(paperNow),
       unit: "on paper, at 2025 prices",
       lines: [
@@ -333,17 +342,25 @@ function Sections({ d, c }: { d: DepositFile; c: Choice }) {
     <>
       <section>
         <h2>How long it actually took here</h2>
-        <p className="sub">
-          {`A saver in ${area.name} putting aside the same share of lower-quartile pay each year, with the pot earning what a one-year savings bond paid, by the year they started. Prices and pay moved while they saved; the line on each bar is the on-paper figure for that year.`}
-        </p>
-        <div className="fig">
-          <ChaseChart chases={chases} paper={paper} starts={starts} area={area.name} />
-          <ul className="legend" aria-hidden="true">
-            <li className="l-bought">years it took</li>
-            <li className="l-still">still saving in 2025</li>
-            <li className="l-paper">on paper</li>
-          </ul>
-        </div>
+        {!chases.some((ch) => ch) ? (
+          <p className="sub">
+            {`There is no saver to follow in ${area.name}: the ONS does not publish its lower-quartile pay for every year since 1997, and following one needs an unbroken run of prices and pay. Pick anywhere else and this fills in.`}
+          </p>
+        ) : (
+          <>
+            <p className="sub">
+              {`A saver in ${area.name} putting aside the same share of lower-quartile pay each year, with the pot earning what a one-year savings bond paid, by the year they started. Prices and pay moved while they saved; the line on each bar is the on-paper figure for that year.`}
+            </p>
+            <div className="fig">
+              <ChaseChart chases={chases} paper={paper} starts={starts} area={area.name} />
+              <ul className="legend" aria-hidden="true">
+                <li className="l-bought">years it took</li>
+                <li className="l-still">still saving in 2025</li>
+                <li className="l-paper">on paper</li>
+              </ul>
+            </div>
+          </>
+        )}
       </section>
 
       <section>

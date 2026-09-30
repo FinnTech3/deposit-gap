@@ -79,14 +79,46 @@ export function latest<T>(values: (T | null)[]): T | null {
   return values[values.length - 1] ?? null;
 }
 
+/** The page's own plan, before a reader changes it: a tenth of pay. */
+export const A_TENTH = 0.1;
+
 /**
- * A reader's own plan as a share of their area's lower-quartile pay: what they
- * save in a year over what a lower-quartile earner there is paid. The chase
- * then follows someone saving the same share of that pay in every year.
+ * The area's latest published lower-quartile pay, or null where there is none.
+ *
+ * The ONS suppresses earnings where too few people are surveyed, which is why
+ * the Isles of Scilly has pay for one year in 29 and none for 2025. Nothing on
+ * this page can be worked out for an area without pay, and treating the
+ * missing figure as zero divides by it.
  */
-export function planFor(area: AreaData, monthly: number, deposit: number): Plan {
-  const pay = latest(area.lq_pay) ?? 1;
-  return { deposit, saving: (12 * monthly) / pay, interest: true };
+export function payNow(area: AreaData): number | null {
+  return latest(area.lq_pay);
+}
+
+/** A tenth of the area's lower-quartile pay, a month, to the nearest £5. */
+export function tenth(area: AreaData): number | null {
+  const pay = payNow(area);
+  return pay === null ? null : Math.round(pay / 120 / 5) * 5;
+}
+
+/** A monthly saving as the share of a year's pay it comes out of. */
+export function shareOfPay(monthly: number, pay: number): number {
+  return (12 * monthly) / pay;
+}
+
+/**
+ * The plan an area is read on: the reader's saving as a share of that area's
+ * lower-quartile pay, so the same share can be followed through every year and
+ * across every other area.
+ *
+ * Where the ONS publishes no pay there is no share of it, and a monthly figure
+ * cannot be turned into one: the town falls back to a tenth of pay, which any
+ * area can be asked. The reader's own years still come straight from what they
+ * save and what a home costs, which needs no pay at all.
+ */
+export function planFrom(area: AreaData, monthly: number | null, deposit: number): Plan {
+  const pay = payNow(area);
+  if (pay === null) return { deposit, saving: A_TENTH, interest: true };
+  return { deposit, saving: shareOfPay(monthly ?? tenth(area)!, pay), interest: true };
 }
 
 // The choice lives in the address, so a shared link opens on the same answer.
