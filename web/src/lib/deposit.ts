@@ -110,15 +110,19 @@ export function shareOfPay(monthly: number, pay: number): number {
  * lower-quartile pay, so the same share can be followed through every year and
  * across every other area.
  *
- * Where the ONS publishes no pay there is no share of it, and a monthly figure
- * cannot be turned into one: the town falls back to a tenth of pay, which any
- * area can be asked. The reader's own years still come straight from what they
- * save and what a home costs, which needs no pay at all.
+ * With no figure typed the plan is a tenth of pay exactly, not the tenth
+ * rounded to £5 for the box: rounding £244.83 up to £245 is a hair more than a
+ * tenth, enough to move the "still saving" count off the published figure of a
+ * tenth of pay. The rounded pounds stay a display, and only a figure the reader
+ * actually types becomes a share of their own. Where the ONS publishes no pay,
+ * there is no share to take, so the town falls back to a tenth all the same;
+ * the reader's own years still come from what they save and what a home costs,
+ * which needs no pay at all.
  */
 export function planFrom(area: AreaData, monthly: number | null, deposit: number): Plan {
   const pay = payNow(area);
-  if (pay === null) return { deposit, saving: A_TENTH, interest: true };
-  return { deposit, saving: shareOfPay(monthly ?? tenth(area)!, pay), interest: true };
+  if (monthly === null || pay === null) return { deposit, saving: A_TENTH, interest: true };
+  return { deposit, saving: shareOfPay(monthly, pay), interest: true };
 }
 
 // The choice lives in the address, so a shared link opens on the same answer.

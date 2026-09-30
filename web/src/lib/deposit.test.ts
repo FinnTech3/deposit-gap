@@ -115,3 +115,26 @@ describe("the load guard", () => {
       expect(looksLikeDepositFile(bad)).toBe(false);
   });
 });
+
+describe("the default plan is an exact tenth, not the rounded box value", () => {
+  // £244.83 rounds to £245 for the box; using £245 as the share saves a hair
+  // more than a tenth and moved the still-saving count off the published 88.
+  const ew = d.areas.find((a) => a.code === "K04000001")!;
+
+  it("uses a tenth exactly when nothing is typed", () => {
+    expect(planFrom(ew, null, 0.1).saving).toBe(0.1);
+    // and a typed figure is the reader's own amount, which may differ
+    expect(planFrom(ew, tenth(ew)!, 0.1).saving).toBeGreaterThan(0.1);
+  });
+
+  it("still-saving-from-2015 count matches the README's 88, not 86", () => {
+    const plan = planFrom(ew, null, 0.1);
+    const las = d.areas.filter((a) => a.level === "la" && onPaper(d, a, 2025, plan) !== null);
+    const still = las.filter((a) => {
+      const c = chase(d, a, 2015, plan);
+      return c && !c.bought;
+    }).length;
+    expect(las).toHaveLength(317);
+    expect(still).toBe(88);
+  });
+});
